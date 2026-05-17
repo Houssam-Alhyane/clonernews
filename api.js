@@ -71,7 +71,3 @@ function startLiveUpdates(cb) {
   poll(true);
   setInterval(() => poll(false), 5000); // throttled: every 5s
 }
-
-// ********************************************
-
-window.HN = { fetchItem, fetchItems, fetchFeedIds, startLiveUpdates };

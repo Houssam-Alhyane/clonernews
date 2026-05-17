@@ -4,7 +4,7 @@ async function openComments(postId) {
   modal.classList.remove('hidden');
   content.innerHTML = '<p>Loading…</p>';
 
-  const post = await HN.fetchItem(postId);
+  const post = await fetchItem(postId); // HN.
 
   if (!post) {
     content.innerHTML = '<p>Failed to load.</p>';
@@ -42,7 +42,7 @@ async function openComments(postId) {
 async function loadBatch(kids, offset, container, postId) {
   const slice = kids.slice(offset, offset + 20);
 
-  const items = await HN.fetchItems(slice);
+  const items = await fetchItems(slice); // HN.
 
   items.sort((a, b) => b.time - a.time); // newest → oldest
 
@@ -98,19 +98,3 @@ function makeComment(c, postId) {
 
   return div;
 }
-
-// *****************************************
-
-document
-  .getElementById('modal-close')
-  .addEventListener('click', () => {
-    modal.classList.add('hidden');
-  });
-
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.classList.add('hidden');
-  }
-});
-
-window.openComments = openComments;

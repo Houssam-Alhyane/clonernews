@@ -46,7 +46,7 @@ function renderPost(item) {
 // fetch poll options for one post
 async function loadPoll(parts, id) {
   //all part of polls
-  const items = await HN.fetchItems(parts);
+  const items = await fetchItems(parts); // HN.
   const el = document.getElementById(id);
   if (el)
     el.innerHTML = items
@@ -69,7 +69,7 @@ async function loadFeed(f) {
   list.innerHTML = '';
   status.textContent = 'Loading…';
   try {
-    allIds = (await HN.fetchFeedIds(f)) || [];
+    allIds = (await fetchFeedIds(f)) || []; // HN.
     allIds.sort((a, b) => b - a);
     if (!allIds.length) {
       status.textContent = 'No posts found.';
@@ -91,7 +91,7 @@ async function loadPage() {
   status.textContent = 'Loading…';
   try {
     const slice = allIds.slice(loaded, loaded + PAGE);
-    const items = await HN.fetchItems(slice);
+    const items = await fetchItems(slice); // HN.
     items.sort((a, b) => b.time - a.time);
     // filter items by feed type so polls don't appear in stories, etc.
     const filtered = items.filter((i) => {
@@ -123,39 +123,3 @@ function showToast(msg, cb) {
   };
   setTimeout(() => toast.classList.add('hidden'), 8000);
 }
-
-// ********************************************************************
-
-// Live updates — notifies every 5s (throttled in api.js)
-HN.startLiveUpdates((ids) =>
-  showToast(`🔔 new update(s) — click to refresh`, () => loadFeed(feed))
-);
-
-// Tab switch
-document.querySelectorAll('.tab').forEach((btn) =>
-  btn.addEventListener('click', () => {
-    document
-      .querySelectorAll('.tab')
-      .forEach((t) => t.classList.remove('active'));
-    btn.classList.add('active');
-    loadFeed(btn.dataset.feed);
-  })
-);
-
-// Comment button (delegation)
-list.addEventListener('click', (e) => {
-  const btn = e.target.closest('.comment-btn');
-  if (btn) openComments(+btn.dataset.id);
-});
-
-// IntersectionObserver — only fires after first page ready
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const fullHeight = document.body.offsetHeight;
-  if (ready && scrollTop + windowHeight >= fullHeight - 200) {
-    loadPage();
-  }
-});
-
-loadFeed('newstories');
