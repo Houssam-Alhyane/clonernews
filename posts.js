@@ -30,9 +30,7 @@ function renderPost(item) {
   }</a>
     <div class="post-meta">
       <span>👤 ${item.by || '?'}</span> <span>🕐 ${timeAgo(item.time)}</span>
-      ${item.score != null ? `<span>▲ ${item.score}</span>` : ''} ${
-    item.descendants != null ? `<span>💬 ${item.descendants}</span>` : ''
-  }
+      ${item.score != null ? `<span>▲ ${item.score}</span>` : ''} 
     </div>
     ${
       type === 'poll' && item.parts
