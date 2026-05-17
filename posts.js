@@ -105,3 +105,18 @@ async function loadPage() {
     busy = false;
   }
 }
+
+function showToast(msg, cb) {
+  toast.textContent = msg;
+  toast.classList.remove('hidden');
+  toast.onclick = () => {
+    toast.classList.add('hidden');
+    cb && cb();
+  };
+  setTimeout(() => toast.classList.add('hidden'), 8000);
+}
+
+// Live updates — notifies every 5s (throttled in api.js)
+HN.startLiveUpdates((ids) =>
+  showToast(`🔔 new update(s) — click to refresh`, () => loadFeed(feed))
+);
