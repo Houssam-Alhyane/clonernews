@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HN Reader</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <span class="logo">▲ HN Reader</span>
+      <nav>
+        <button class="tab active" data-feed="newstories">Stories</button>
+        <button class="tab" data-feed="jobstories">Jobs</button>
+        <button class="tab" data-feed="pollstories">Polls</button>
+      </nav>
+    </header>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <main>
+      <div id="post-list"></div>
+      <div id="load-more-trigger"></div>
+      <div id="status"></div>
+    </main>
+
+    <!-- Comment Modal -->
+    <div id="modal" class="modal hidden">
+      <div class="modal-box">
+        <button id="modal-close">✕ Close</button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="comments.js"></script>
+    <script src="posts.js"></script>
+  </body>
+</html>
