@@ -62,3 +62,46 @@ async function loadPoll(parts, id) {
       )
       .join('');
 }
+//loadFeed = reset + fetch new dataset
+async function loadFeed(f) {
+  feed = f;
+  allIds = [];
+  loaded = 0;
+  busy = false;
+  ready = false;
+  list.innerHTML = '';
+  status.textContent = 'Loading…';
+  try {
+    allIds = (await HN.fetchFeedIds(f)) || [];
+    allIds.sort((a, b) => b - a);
+    if (!allIds.length) {
+      status.textContent = 'No posts found.';
+      return;
+    }
+    status.textContent = '';
+    await loadPage();
+    ready = true;
+  } catch (e) {
+    status.textContent = 'Error loading feed. Try again.';
+    busy = false;
+  }
+}
+//upload fildes in page
+async function loadPage() {
+  if (busy || loaded >= allIds.length) return;
+  busy = true;
+  status.textContent = 'Loading…';
+  try {
+    const slice = allIds.slice(loaded, loaded + PAGE);
+    const items = await HN.fetchItems(slice);
+    items.sort((a, b) => b.time - a.time);
+    items.forEach((i) => list.append(renderPost(i)));
+    loaded += slice.length;
+    const done = loaded >= allIds.length;
+    status.textContent = done ? 'All posts loaded.' : '';
+  } catch (e) {
+    status.textContent = 'Error loading posts. Try again.';
+  } finally {
+    busy = false;
+  }
+}
