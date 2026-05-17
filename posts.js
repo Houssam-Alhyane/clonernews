@@ -6,15 +6,21 @@ const typeBadge = (t) =>
     t[0].toUpperCase() + t.slice(1)
   }</span>`;
 
+function getType(item) {
+  if (item.type === 'job') return 'job';
+  if (item.type === 'poll') return 'poll';
+  return 'story';
+}
+
 // change from obj to html
 function renderPost(item) {
-  const type =
-    item.type === 'job' ? 'job' : item.type === 'poll' ? 'poll' : 'story';
+  const type = getType(item);
   const url = item.url || `https://news.ycombinator.com/item?id=${item.id}`;
   const card = document.createElement('div');
   card.className = 'post-card';
   card.dataset.id = item.id;
   //title and contant
+  console.log(type);
   card.innerHTML = `
     ${typeBadge(type)}<a class="post-title" href="${url}" target="_blank">${
     item.title || '(no title)'
@@ -87,7 +93,16 @@ async function loadPage() {
     const slice = allIds.slice(loaded, loaded + PAGE);
     const items = await HN.fetchItems(slice);
     items.sort((a, b) => b.time - a.time);
-    items.forEach((i) => list.append(renderPost(i)));
+    // filter items by feed type so polls don't appear in stories, etc.
+    const filtered = items.filter((i) => {
+      const type = getType(i);
+      if (feed === 'newstories')
+        return type === 'story' || type === 'ask' || type === 'show';
+      if (feed === 'jobstories') return type === 'job';
+      if (feed === 'pollstories') return type === 'poll';
+      return true;
+    });
+    filtered.forEach((i) => list.append(renderPost(i)));
     loaded += slice.length;
     const done = loaded >= allIds.length;
     status.textContent = done ? 'All posts loaded.' : '';
