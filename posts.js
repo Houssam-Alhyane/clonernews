@@ -120,3 +120,15 @@ function showToast(msg, cb) {
 HN.startLiveUpdates((ids) =>
   showToast(`🔔 new update(s) — click to refresh`, () => loadFeed(feed))
 );
+
+// Tab switch
+document.querySelectorAll('.tab').forEach((btn) =>
+  btn.addEventListener('click', () => {
+    document
+      .querySelectorAll('.tab')
+      .forEach((t) => t.classList.remove('active'));
+    btn.classList.add('active');
+    loadFeed(btn.dataset.feed);
+  })
+);
+
