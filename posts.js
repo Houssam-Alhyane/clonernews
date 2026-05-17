@@ -38,8 +38,8 @@ function renderPost(item) {
         : ''
     }
     ${
-      item.kids?.length
-        ? `<button class="comment-btn" data-id="${item.id}">💬 Comments (${item.kids.length})</button>`
+      item.descendants
+        ? `<button class="comment-btn" data-id="${item.id}">💬 Comments (${item.descendants})</button>`
         : ''
     }`;
   if (type === 'poll' && item.parts) loadPoll(item.parts, `p${item.id}`); // load poll options asynchronously
