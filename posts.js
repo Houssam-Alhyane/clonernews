@@ -1,21 +1,12 @@
-const PAGE = 15; // how many posts to load per batch
-let allIds = [], // all post IDs for current feed
-  loaded = 0, // how many posts have been loaded so far
-  busy = false, // whether a load is currently in progress
-  ready = false, //whether the first page has finished loading
-  feed = 'newstories';
+// Posts
 
-const list = document.getElementById('post-list'); // main container for posts
-const status = document.getElementById('status'); // status text (loading, error, etc.)
-const toast = document.getElementById('toast'); // live update notification
-
-//creat bade Jobs Polls
+// creates bade Jobs Polls
 const typeBadge = (t) =>
   `<span class="post-badge badge-${t}">${
     t[0].toUpperCase() + t.slice(1)
   }</span>`;
 
-//change from obj to html
+// change from obj to html
 function renderPost(item) {
   const type =
     item.type === 'job' ? 'job' : item.type === 'poll' ? 'poll' : 'story';
@@ -45,7 +36,8 @@ function renderPost(item) {
   if (type === 'poll' && item.parts) loadPoll(item.parts, `p${item.id}`); // load poll options asynchronously
   return card;
 }
-//fetch poll options for one post
+
+// fetch poll options for one post
 async function loadPoll(parts, id) {
   //all part of polls
   const items = await HN.fetchItems(parts);
@@ -60,7 +52,8 @@ async function loadPoll(parts, id) {
       )
       .join('');
 }
-//loadFeed = reset + fetch new dataset
+
+// loadFeed = reset + fetch new dataset
 async function loadFeed(f) {
   feed = f;
   allIds = [];
@@ -84,7 +77,8 @@ async function loadFeed(f) {
     busy = false;
   }
 }
-//upload fildes in page
+
+// upload fildes in page
 async function loadPage() {
   if (busy || loaded >= allIds.length) return;
   busy = true;
@@ -104,6 +98,7 @@ async function loadPage() {
   }
 }
 
+//
 function showToast(msg, cb) {
   toast.textContent = msg;
   toast.classList.remove('hidden');
@@ -113,6 +108,8 @@ function showToast(msg, cb) {
   };
   setTimeout(() => toast.classList.add('hidden'), 8000);
 }
+
+// ********************************************************************
 
 // Live updates — notifies every 5s (throttled in api.js)
 HN.startLiveUpdates((ids) =>

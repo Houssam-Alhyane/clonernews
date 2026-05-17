@@ -1,20 +1,5 @@
 // comments.js — comment modal
 
-const modal = document.getElementById('modal');
-const content = document.getElementById('modal-content');
-
-document
-  .getElementById('modal-close')
-  .addEventListener('click', () => {
-    modal.classList.add('hidden');
-  });
-
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.classList.add('hidden');
-  }
-});
-
 async function openComments(postId) {
   modal.classList.remove('hidden');
   content.innerHTML = '<p>Loading…</p>';
@@ -36,8 +21,9 @@ async function openComments(postId) {
     </div>
 
     <div class="modal-meta">
-      by ${post.by || '?'} · ${post.descendants || 0} comments
+      by ${post.by || '?'} · ${post.descendants || 0} comments · parent #${postId}</div>
     </div>
+    <div id="cr"></div>
   `;
 
   const root = document.getElementById('cr');
@@ -112,5 +98,19 @@ function makeComment(c, postId) {
 
   return div;
 }
+
+// *****************************************
+
+document
+  .getElementById('modal-close')
+  .addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.add('hidden');
+  }
+});
 
 window.openComments = openComments;

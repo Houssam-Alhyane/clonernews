@@ -1,39 +1,39 @@
 // api.js — fetch, cache, live updates
 
-const BASE = 'https://hacker-news.firebaseio.com/v0';
-const cache = {};
-const seen = new Set();
-
 // Shared helpers used by posts.js and comments.js
 const timeAgo = (u) => {
   const s = (Date.now() / 1000 - u) | 0;
-  return s < 60
-    ? s + 's'
-    : s < 3600
-    ? ((s / 60) | 0) + 'm'
-    : s < 86400
-    ? ((s / 3600) | 0) + 'h'
-    : ((s / 86400) | 0) + 'd';
+  return s < 60 ?
+    s + 's' :
+    s < 3600 ?
+      ((s / 60) | 0) + 'm' :
+      s < 86400 ?
+        ((s / 3600) | 0) + 'h' :
+        ((s / 86400) | 0) + 'd';
 };
+
+//
 const sanitize = (h) => {
-  const d = document.createElement('div');
-  d.innerHTML = h;
-  d.querySelectorAll('script,iframe,object').forEach((e) => e.remove());
-  return d.innerHTML;
+  const div = document.createElement('div');
+  div.innerHTML = h;
+  div.querySelectorAll('script,iframe,object').forEach((e) => e.remove());
+  return div.innerHTML;
 };
 
-const get = (url) =>
-  fetch(url)
-    .then((r) => r.json())
-    .catch(() => null);
+//
+const get = (url) => fetch(url)
+  .then(r => r.json())
+  .catch(() => null);
 
+//
 async function fetchItem(id) {
   if (cache[id]) return cache[id];
-  const d = await get(`${BASE}/item/${id}.json`);
-  if (d) cache[id] = d;
-  return d;
+  const item = await get(`${BASE}/item/${id}.json`);
+  if (item) cache[id] = item;
+  return item;
 }
 
+//
 async function fetchItems(ids) {
   const out = [];
   for (let i = 0; i < ids.length; i += 20) {
@@ -43,16 +43,17 @@ async function fetchItems(ids) {
   return out;
 }
 
+//
 async function fetchFeedIds(feed) {
-  if (feed !== 'pollstories') return (await get(`${BASE}/${feed}.json`)) || [];
+  if (feed !== 'pollstories')
+    return (await get(`${BASE}/${feed}.json`)) || [];
   // Use Algolia HN Search API to find recent polls — no official HN poll endpoint exists
-  const d = await get(
-    'https://hn.algolia.com/api/v1/search_by_date?tags=poll&hitsPerPage=30'
-  );
+  const d = await get(ALGOLIA_API);
   if (!d || !d.hits) return [];
   return d.hits.map((h) => parseInt(h.objectID)).filter(Boolean);
 }
 
+//
 function startLiveUpdates(cb) {
   async function poll(first) {
     const d = await get(`${BASE}/updates.json`);
@@ -70,5 +71,7 @@ function startLiveUpdates(cb) {
   poll(true);
   setInterval(() => poll(false), 5000); // throttled: every 5s
 }
+
+// ********************************************
 
 window.HN = { fetchItem, fetchItems, fetchFeedIds, startLiveUpdates };
