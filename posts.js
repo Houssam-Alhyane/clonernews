@@ -132,3 +132,20 @@ document.querySelectorAll('.tab').forEach((btn) =>
   })
 );
 
+// Comment button (delegation)
+list.addEventListener('click', (e) => {
+  const btn = e.target.closest('.comment-btn');
+  if (btn) openComments(+btn.dataset.id);
+});
+
+// IntersectionObserver — only fires after first page ready
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const fullHeight = document.body.offsetHeight;
+  if (ready && scrollTop + windowHeight >= fullHeight - 200) {
+    loadPage();
+  }
+});
+
+loadFeed('newstories');
